@@ -1,9 +1,17 @@
-import { writeFile } from 'jsonfile';
+import { writeFileSync } from 'jsonfile';
 import { randomUUID } from 'node:crypto';
 import db from '../database/movies.json';
 
 abstract class MovieModel {
-	static create() {}
+	static create(dataObj: any) {
+		const { name, year, director, cast, rating } = dataObj;
+		const id = randomUUID();
+
+		db.movies.push({ id, name, year, director, cast, rating });
+
+		writeFileSync('./src/database/movies.json', db);
+		return { id, name };
+	}
 
 	static getInfo() {
 		return db.info;
@@ -18,7 +26,26 @@ abstract class MovieModel {
 		return movieFound;
 	}
 
-	static update() {}
+	static update(dataObj: any) {
+		const { id, name, year, director, cast, rating } = dataObj;
+
+		const movieToUpdate = db.movies.find((movie: any) => movie.id == id);
+
+		if (!movieToUpdate) return { error: 'Movie not found' };
+
+		if (name) movieToUpdate.name = name;
+		if (year) movieToUpdate.year = year;
+		if (director) movieToUpdate.director = director;
+		if (cast) movieToUpdate.cast = cast;
+		if (rating) movieToUpdate.rating = rating;
+
+		writeFileSync('./src/database/movies.json', db);
+
+		return {
+			message: 'Updated successfully',
+			movie: movieToUpdate,
+		};
+	}
 
 	static delete() {}
 }

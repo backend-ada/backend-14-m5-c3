@@ -6,9 +6,10 @@ export const movieRouter = Router();
 movieRouter.get('/', MovieController.getInfo);
 movieRouter.get('/movies', MovieController.getAll);
 movieRouter.get('/movies/:id', MovieController.getById);
+// movieRouter.get('/movies/:id', MovieController.getByDirector);
 
-movieRouter.post('/api/movies', MovieController.create);
+movieRouter.post('/movies', MovieController.create);
 
-movieRouter.patch('/api/movies/:id', MovieController.update);
+movieRouter.patch('/movies/:id', MovieController.update);
 
 movieRouter.use('*', MovieController.error);

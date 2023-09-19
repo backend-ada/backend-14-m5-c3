@@ -7,6 +7,9 @@ abstract class MovieController {
 	}
 
 	static getAll(req: any, res: any) {
+		const queryParams = req.query;
+		console.log(queryParams);
+
 		const movies = MovieModel.getAll();
 		res.json(movies);
 	}
@@ -22,48 +25,36 @@ abstract class MovieController {
 		res.status(200).json(movieFound);
 	}
 
+	// static getByDirector(req: any, res: any) {
+	// 	// Trae pelis por director
+	// }
+
 	static create(req: any, res: any) {
 		const { name, year, director, cast, rating } = req.body;
-		const id = randomUUID();
 
-		db.movies.push({ id, name, year, director, cast, rating });
+		const movie = MovieModel.create({ name, year, director, cast, rating });
 
-		writeFile('./src/database/movies.json', db)
-			.then((data) => {
-				console.log(data);
-				return res.status(201).json({ id, name });
-			})
-			.catch((err) => {
-				return res.status(500).json({ message: 'Something went wrong', err });
-			});
+		res.json(movie);
 	}
 
 	static update(req: any, res: any) {
 		const { id } = req.params;
 		const { name, year, director, cast, rating } = req.body;
 
-		const movieToUpdate = db.movies.find((movie: any) => movie.id == id);
+		const movieUdpated = MovieModel.update({
+			id,
+			name,
+			year,
+			director,
+			cast,
+			rating,
+		});
 
-		if (!movieToUpdate)
-			return res.status(404).json({ error: 'Movie not found' });
+		console.log({ name, year, director, cast, rating });
 
-		if (name) movieToUpdate.name = name;
-		if (year) movieToUpdate.year = year;
-		if (director) movieToUpdate.director = director;
-		if (cast) movieToUpdate.cast = cast;
-		if (rating) movieToUpdate.rating = rating;
+		if (movieUdpated.error) return res.status(404).json(movieUdpated.error);
 
-		writeFile('./src/database/movies.json', db)
-			.then((data) => {
-				console.log(data);
-				return res.status(200).json({
-					message: 'Updated successfully',
-					movie: movieToUpdate,
-				});
-			})
-			.catch((err) => {
-				return res.status(500).json({ message: 'Something went wrong', err });
-			});
+		res.json(movieUdpated);
 	}
 
 	static error(req: any, res: any) {
