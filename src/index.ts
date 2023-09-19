@@ -1,13 +1,17 @@
-//Importación de dependencias y configuraciones principales.
+import express, { json } from 'express';
+import { movieRouter } from './routes/movies';
+
+const PORT = 27000;
+const app = express();
 
 // ------------------| MIDDLEWARES |------------------- //
 
-// Middleware para poder procesar el body de las request.
+app.use(json());
 
-// --------------------| ROUTING |--------------------- //
-
-// Armen acá todo el ruteo de los endpoints.
+app.use('/api', movieRouter);
 
 // ---------------------| SERVER |--------------------- //
 
-// Poner a la escucha al servidor.
+app.listen(PORT, () => {
+	console.log('Server listening on port,', PORT);
+});
